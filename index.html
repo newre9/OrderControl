@@ -36,7 +36,6 @@
       -webkit-text-fill-color: transparent;
     }
 
-    /* GİZLİ DOSYA INPUTU */
     #fileInput {
       display: none;
     }
@@ -90,6 +89,13 @@
       transform: scale(1.02);
     }
 
+    #loadingMessage {
+      display: none;
+      color: #007cf0;
+      font-weight: 500;
+      margin-top: 20px;
+    }
+
     #output {
       margin-top: 30px;
       text-align: left;
@@ -139,10 +145,16 @@
       <input type="file" id="fileInput" accept=".pdf" onchange="showFileName()">
     </label>
 
-    <!-- DOSYA SEÇİLDİĞİNDE GÖRÜNEN BİLGİ BARI -->
+    <!-- SEÇİLEN DOSYA ADI -->
     <div id="filenameBar" class="filename-bar"></div>
 
+    <!-- YÜKLENİYOR MESAJI -->
+    <div id="loadingMessage">🔄 Analiz ediliyor, lütfen bekleyin...</div>
+
+    <!-- ANALİZ BUTONU -->
     <button onclick="analyzePDF()">Yükle ve Analiz Et</button>
+
+    <!-- SONUÇLAR BURAYA GELECEK -->
     <div id="output"></div>
   </div>
 
@@ -163,6 +175,9 @@
         return;
       }
 
+      document.getElementById('loadingMessage').style.display = 'block';
+      document.getElementById('output').innerHTML = '';
+
       const reader = new FileReader();
       reader.onload = async function () {
         const typedarray = new Uint8Array(this.result);
@@ -181,6 +196,8 @@
             orderCounts[order] = (orderCounts[order] || 0) + 1;
           }
         }
+
+        document.getElementById('loadingMessage').style.display = 'none';
 
         let output = `<h3>Sonuçlar:</h3><ul>`;
         for (const [order, count] of Object.entries(orderCounts)) {
